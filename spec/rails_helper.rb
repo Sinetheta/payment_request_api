@@ -48,10 +48,18 @@ Capybara.register_driver :chrome do |app|
 end
 
 if ENV['CHROME']
-  Capybara.javascript_driver = :chrome
+  Capybara.javascript_driver = :slow_chrome
+
+  Capybara.register_driver :slow_chrome do |app|
+    driver = Capybara::Selenium::Driver.new(app,
+      browser:  :chrome,
+    )
+    driver.browser.network_conditions = { latency: 250, throughput: 500 * 1024 }
+    driver
+  end
 
   Capybara.configure do |config|
-    config.default_driver = :selenium
+    config.default_driver = :chrome
   end
 end
 
